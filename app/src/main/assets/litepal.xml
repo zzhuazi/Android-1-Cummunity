@@ -1,0 +1,8 @@
+<litepal>
+    <dbname value="Community"/>
+    <version value="1"/>
+    <list>
+        <mapping class="com.ljh.community.model.Section"/>
+        <mapping class="com.ljh.community.model.Article"/>
+    </list>
+</litepal>

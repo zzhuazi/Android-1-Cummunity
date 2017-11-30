@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--规定工具栏必须在滚动列表之上-->
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <!--工具栏-->
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:layout_scrollFlags="scroll|enterAlways|snap">
+            <!--城市名-->
+            <TextView
+                android:id="@+id/title_text"
+                android:text="社区"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="#fff"
+                android:textSize="20sp"/>
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
+
+    <!--FrameLayout-->
+    <FrameLayout
+        android:id="@+id/fl_content"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"></FrameLayout>
+    <!--底部的RadioGroup-->
+    <RadioGroup
+        android:id="@+id/rg_main"
+        android:padding="5dp"
+        android:background="#11000000"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <RadioButton
+            android:id="@+id/rb_article_frame"
+            android:text="文章"
+            android:drawableTop="@drawable/rb_article_drawable_selector"
+            style="@style/buttom_tag_style" />
+        <RadioButton
+            android:id="@+id/rb_notification"
+            android:text="通知"
+            android:drawableTop="@drawable/rb_notification_drawable_selector"
+            style="@style/buttom_tag_style"/>
+        <RadioButton
+            android:id="@+id/rb_chat"
+            android:text="私信"
+            android:drawableTop="@drawable/rb_chat_drawable_selector"
+            style="@style/buttom_tag_style"/>
+        <RadioButton
+            android:id="@+id/rb_user"
+            android:text="我"
+            android:drawableTop="@drawable/rb_user_drawable_selector"
+            style="@style/buttom_tag_style"/>
+
+    </RadioGroup>
+</LinearLayout>
