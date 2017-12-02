@@ -23,6 +23,34 @@ public class ArticleActivity extends AppCompatActivity {
     TextView articleContentTv;
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_article);
+        collapsingToolbarLayout = findViewById(R.id.collapsing_toolbar);
+        articleContentTv = findViewById(R.id.article_content_text);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+        initData();
+    }
+
+    private void initData() {
+        //获取intent
+        Intent intent = getIntent();
+        String artilceId = intent.getStringExtra("articleId");
+        //数据库中根据articleId查找该文章
+        final List<Article> articles = DataSupport.where("articleId=?", artilceId).find(Article.class);
+        Article article = articles.get(0);
+        //设置伸缩标题内容及文章内容
+        collapsingToolbarLayout.setTitle(article.getTitle());
+        collapsingToolbarLayout.setExpandedTitleColor(ContextCompat.getColor(getBaseContext(), R.color.ActicleActivity_Coll_black));
+        articleContentTv.setText(article.getContent());
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -30,29 +58,5 @@ public class ArticleActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_article);
-        collapsingToolbarLayout = findViewById(R.id.collapsing_toolbar);
-        articleContentTv = findViewById(R.id.article_content_text);
-        Intent intent = getIntent();
-        String artilceId = intent.getStringExtra("articleId");
-        Log.i(TAG, "onCreate: " + artilceId);
-        final List<Article> articles = DataSupport.where("articleId=?", artilceId).find(Article.class);
-        Article article = articles.get(0);
-        collapsingToolbarLayout.setTitle(article.getTitle());
-        collapsingToolbarLayout.setExpandedTitleColor(ContextCompat.getColor(getBaseContext(), R.color.ActicleActivity_Coll_black));
-        articleContentTv.setText(article.getContent());
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-
     }
 }

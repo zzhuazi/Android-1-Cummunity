@@ -4,5 +4,7 @@
     <list>
         <mapping class="com.ljh.community.model.Section"/>
         <mapping class="com.ljh.community.model.Article"/>
+        <mapping class="com.ljh.community.model.User"/>
+        <mapping class="com.ljh.community.model.Notification"/>
     </list>
 </litepal>

@@ -17,18 +17,19 @@ import java.util.List;
 
 public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHolder> {
 
-    private List<Article> mArtilceList;
+    private List<Article> mArticleList;
     private OnItemClickLitener onItemClickLitener = null;
 
     public interface OnItemClickLitener{
         void onItemClick(View view, int position);
     }
+
     public void setOnItemClickLitener(OnItemClickLitener onItemClickLitener){
         this.onItemClickLitener = onItemClickLitener;
     }
 
-    public ArticlesAdapter(List<Article> mArtilceList) {
-        this.mArtilceList = mArtilceList;
+    public ArticlesAdapter(List<Article> mArticleList) {
+        this.mArticleList = mArticleList;
     }
 
     @Override
@@ -40,8 +41,8 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        if (mArtilceList.size() != 0){
-            Article article = mArtilceList.get(position);
+        if (mArticleList.size() != 0){
+            Article article = mArticleList.get(position);
             holder.articleTitle.setText(article.getTitle());
         }
         if (onItemClickLitener != null){
@@ -57,7 +58,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
 
     @Override
     public int getItemCount() {
-        return mArtilceList.size();
+        return mArticleList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{

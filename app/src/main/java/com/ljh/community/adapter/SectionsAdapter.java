@@ -48,10 +48,10 @@ public class SectionsAdapter extends RecyclerView.Adapter<SectionsAdapter.ViewHo
         void onItemClick(View view, int position);
     }
 
-    private OnItemClickLitener mOnItemClickLitener = null;
+    private OnItemClickLitener mOnItemClickListener = null;
 
     public void setOnItemClickLitener(OnItemClickLitener mOnItemClickLitener) {
-        this.mOnItemClickLitener = mOnItemClickLitener;
+        this.mOnItemClickListener = mOnItemClickLitener;
     }
 
     @Override
@@ -73,12 +73,12 @@ public class SectionsAdapter extends RecyclerView.Adapter<SectionsAdapter.ViewHo
             }
         }
         // 如果设置了回调，则设置点击事件
-        if (mOnItemClickLitener != null) {
+        if (mOnItemClickListener != null) {
             holder.sectionName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     int pos = holder.getLayoutPosition();
-                    mOnItemClickLitener.onItemClick(holder.sectionName, pos);
+                    mOnItemClickListener.onItemClick(holder.sectionName, pos);
                 }
             });
         }

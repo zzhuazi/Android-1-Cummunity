@@ -71,7 +71,6 @@ public class ArticleFragment extends BaseFragment {
     @Override
     protected void initData() {
         super.initData();
-        Log.d(TAG, "initData: ");
         //查找sections数据
         querySections();
 
