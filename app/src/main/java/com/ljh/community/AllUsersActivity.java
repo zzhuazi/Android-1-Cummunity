@@ -1,5 +1,6 @@
 package com.ljh.community;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
@@ -62,7 +63,10 @@ public class AllUsersActivity extends AppCompatActivity {
                         //开启单个用户信息actionvy
                         TextView textView = (TextView) view;
                         String message = (String) textView.getText();
-                        Toast.makeText(AllUsersActivity.this, message, Toast.LENGTH_SHORT).show();
+                        User user = mUserList.get(position);
+                        Intent intent = new Intent(AllUsersActivity.this, UserActivity.class);
+                        intent.putExtra("userId", user.getUserId());
+                        startActivity(intent);
                     }
                 });
                 rvAllUser.setAdapter(adapter);
@@ -71,13 +75,6 @@ public class AllUsersActivity extends AppCompatActivity {
     }
 
     public class DownAllUsersTask extends AsyncTask<Void, Void, List<User>> {
-        /**
-         * 开启新线程请求数据前的准备
-         */
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
 
         /**
          * 新线程处理 请求数据
@@ -120,15 +117,6 @@ public class AllUsersActivity extends AppCompatActivity {
                 }
             });
             return null;
-        }
-
-        /**
-         * 数据请求完后 页面处理
-         * @param users
-         */
-        @Override
-        protected void onPostExecute(List<User> users) {
-            super.onPostExecute(users);
         }
     }
 

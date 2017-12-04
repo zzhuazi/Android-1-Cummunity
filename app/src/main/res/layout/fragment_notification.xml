@@ -13,13 +13,18 @@
 
     </android.support.v7.widget.RecyclerView>
 
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_notifications_notifications"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_notification_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_notifications_notifications"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    </android.support.v7.widget.RecyclerView>
+        </android.support.v7.widget.RecyclerView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
 
 </LinearLayout>
 

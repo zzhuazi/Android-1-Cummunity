@@ -3,6 +3,8 @@ package com.ljh.community.fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -35,17 +37,29 @@ public class ChatFragment extends BaseFragment {
     private static final String TAG = ChatFragment.class.getSimpleName();
     private List<Chat> chatsList;
     private RecyclerView rvChats;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private Integer userId;
 
     @Override
     protected View initView() {
         View view = View.inflate(mContext, R.layout.fragment_chat, null);
         rvChats = view.findViewById(R.id.rv_chats);
-
+        swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_chat_fragment);
         chatsList = new ArrayList<>();
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         rvChats.setLayoutManager(layoutManager);
+        swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(getContext(), R.color.colorPrimary));
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //数据库中无数据，到网络中请求
+                String address = "http://192.168.137.1/chatsAndroid";
+                HashMap<String, Object> hashMap = new HashMap<>();
+                hashMap.put("userId", userId);
+                queryFromServer(address, hashMap);
+            }
+        });
         return view;
     }
 
@@ -123,7 +137,7 @@ public class ChatFragment extends BaseFragment {
                 if (result == 1) {
                     //设置数据适配器
                     chatsList = DataSupport.where("userId=?", userId.toString()).find(Chat.class);
-                    Log.i(TAG, "onResponse: chatsLists?"+ chatsList.isEmpty());
+                    Log.i(TAG, "onResponse: chatsLists?" + chatsList.isEmpty());
                     setChatsAdapter();
                 } else if (result == 0) {
                     //没有数据，则提示没有数据
@@ -157,7 +171,9 @@ public class ChatFragment extends BaseFragment {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                adapter.notifyDataSetChanged();
                 rvChats.setAdapter(adapter);
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
     }

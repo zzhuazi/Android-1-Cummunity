@@ -29,11 +29,11 @@ public class NotificationTypeAdapter extends RecyclerView.Adapter<NotificationTy
         this.isClicks = isClicks;
     }
 
-    public interface OnItemClickListener{
+    public interface OnItemClickListener {
         void onItemClick(View view, int position);
     }
 
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener){
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
 
@@ -48,14 +48,14 @@ public class NotificationTypeAdapter extends RecyclerView.Adapter<NotificationTy
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_notification_type_item,null);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_notification_type_item, parent, false);
         final ViewHolder holder = new ViewHolder(view);
         return holder;
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        if (!mTypeList.isEmpty()){
+        if (!mTypeList.isEmpty()) {
             holder.notificationTv.setText(mTypeList.get(position));
             if (isClicks.get(position)) {
                 holder.notificationTv.setTextColor(ContextCompat.getColor(holder.notificationTv.getContext(), R.color.ActicleFragmentAdapter_tv_red));
@@ -63,7 +63,7 @@ public class NotificationTypeAdapter extends RecyclerView.Adapter<NotificationTy
                 holder.notificationTv.setTextColor(ContextCompat.getColor(holder.notificationTv.getContext(), R.color.ActicleFragmentAdapter_tv_black));
             }
         }
-        if (onItemClickListener != null){
+        if (onItemClickListener != null) {
             holder.notificationTv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -79,9 +79,10 @@ public class NotificationTypeAdapter extends RecyclerView.Adapter<NotificationTy
         return mTypeList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
         TextView notificationTv;
         View view;
+
         public ViewHolder(View itemView) {
             super(itemView);
             view = itemView;

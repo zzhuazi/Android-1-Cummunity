@@ -10,6 +10,7 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONObject;
 import org.litepal.crud.DataSupport;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -76,23 +77,34 @@ public class Utility {
      * @param response
      * @return
      */
-    public static int handleArticlesResponse(String response) {
+    public static int handleArticlesResponse(String response, String type) {
         if (!TextUtils.isEmpty(response)) {
             try {
                 JSONObject jsonObject = new JSONObject(response);
+                Log.i(TAG, "handleArticlesResponse: " + jsonObject);
                 String status = (String) jsonObject.get("status");
                 LogUtil.i(TAG, status);
                 if (status.equals("success")) {
                     String data = (String) jsonObject.get("data").toString();
-                    Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
-                    ;
-                    List<Article> articles = gson.fromJson(data, new TypeToken<List<Article>>() {
-                    }.getType());
+                    Log.i(TAG, "handleArticlesResponse: " + data);
+                    List<Article> articles = new ArrayList<>();
+                    if (type.equals("complex")) {
+                        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+                        articles = gson.fromJson(data, new TypeToken<List<Article>>() {
+                        }.getType());
+                    } else if (type.equals("single")){
+                        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+                        Article article = gson.fromJson(data, Article.class);
+                        articles.add(article);
+                    }
                     for (int i = 0; i < articles.size(); i++) {
                         //组装实体类对象
                         Article article = articles.get(i);
-                        Log.d(TAG, "handleArticlesResponse: " + article.toString());
-                        article.save();//将数据存储到数据库中
+                        Integer articleId = article.getArticleId();
+                        boolean exist = DataSupport.isExist(Article.class, "articleId=?", articleId.toString());
+                        if (!exist){
+                            article.save();//将数据存储到数据库中
+                        }
                     }
                     return 1;
                 } else if (status.equals("zero")) {

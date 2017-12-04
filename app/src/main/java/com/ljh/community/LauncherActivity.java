@@ -1,7 +1,9 @@
 package com.ljh.community;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -14,7 +16,13 @@ public class LauncherActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                startLoginActivity();
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                boolean isLogin = sharedPreferences.getBoolean("isLogin", false);
+                if (isLogin){
+                    startMainActivity();
+                }else{
+                    startLoginActivity();
+                }
             }
         },2000);
     }

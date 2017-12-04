@@ -2,7 +2,10 @@ package com.ljh.community.fragment;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -48,6 +51,9 @@ public class ArticleFragment extends BaseFragment {
     //设置sectionId
     private static Integer sectionId;
 
+    private SwipeRefreshLayout swipeRefreshLayout;
+
+
     @Override
     protected View initView() {
         LogUtil.i(TAG, "InitView");
@@ -55,6 +61,7 @@ public class ArticleFragment extends BaseFragment {
         View view = View.inflate(mContext, R.layout.fragment_article, null);
         rvSections = view.findViewById(R.id.rv_sections_article);
         rvArticles = view.findViewById(R.id.rv_articles_article);
+        swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_article_fragment);
         sectionList = new ArrayList<>();
         articleList = new ArrayList<>();
 
@@ -65,6 +72,14 @@ public class ArticleFragment extends BaseFragment {
         //给artilce recyclerView 设置LayoutManager
         LinearLayoutManager article_LayoutManager = new LinearLayoutManager(getContext());
         rvArticles.setLayoutManager(article_LayoutManager);
+        swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(getContext(),R.color.colorPrimary));
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                String address = "http://192.168.137.1/sectionJSON?sectionId=" + sectionId;
+                queryFromServer(address, "articles");
+            }
+        });
         return view;
     }
 
@@ -117,27 +132,31 @@ public class ArticleFragment extends BaseFragment {
             queryFromServer(address, "articles");
         } else {
             //有数据，设置数据适配器
-            final ArticlesAdapter adapter = new ArticlesAdapter(articleList);
-            adapter.setOnItemClickLitener(new ArticlesAdapter.OnItemClickLitener() {
-                @Override
-                public void onItemClick(View view, int position) {
-                    Article article = articleList.get(position);
-                    Integer articleId = article.getArticleId();
-                    Intent intent = new Intent();
-                    intent.putExtra("articleId", articleId.toString());
-                    intent.setClass(getContext(), ArticleActivity.class);
-                    Log.i(TAG, "onItemClick: "+ intent.getStringExtra("articleId"));
-                    startActivity(intent);
-                }
-            });
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    rvArticles.setAdapter(adapter);
-                }
-            });
+            setArticlesAdapter();
         }
 
+    }
+
+    private void setArticlesAdapter() {
+        final ArticlesAdapter adapter = new ArticlesAdapter(articleList);
+        adapter.setOnItemClickLitener(new ArticlesAdapter.OnItemClickLitener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Article article = articleList.get(position);
+                Integer articleId = article.getArticleId();
+                Intent intent = new Intent();
+                intent.putExtra("articleId", articleId.toString());
+                intent.setClass(getContext(), ArticleActivity.class);
+                Log.i(TAG, "onItemClick: "+ intent.getStringExtra("articleId"));
+                startActivity(intent);
+            }
+        });
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                rvArticles.setAdapter(adapter);
+            }
+        });
     }
 
     /**
@@ -173,7 +192,7 @@ public class ArticleFragment extends BaseFragment {
                     result = Utility.handleSectionsResponse(responseText);
                 }
                 if ("articles".equals(type)) {
-                    result = Utility.handleArticlesResponse(responseText);
+                    result = Utility.handleArticlesResponse(responseText,"complex");
                 }
                 //如果回传成功，根据type，调用对应的处理方法
                 if (result == 1) {
@@ -182,7 +201,15 @@ public class ArticleFragment extends BaseFragment {
                         querySections();
                     }
                     if ("articles".equals(type)) {
-                        queryArticles();
+                        articleList = DataSupport.where("sectionId=?", sectionId.toString()).find(Article.class);
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                rvArticles.setAdapter(null);
+                                setArticlesAdapter();
+                                swipeRefreshLayout.setRefreshing(false);
+                            }
+                        });
                     }
                 }else if(result == 0){
                     //没有数据，则提示没有数据

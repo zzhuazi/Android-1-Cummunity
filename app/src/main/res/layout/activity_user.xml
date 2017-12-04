@@ -2,42 +2,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.ljh.community.fragment.UserFragment">
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="180dp"
         android:padding="10dp"
         android:background="?attr/colorPrimary">
-
+        <!--用户头像-->
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/user_image"
+            android:id="@+id/userActivity_image"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:src="@drawable/nav_icon"
             android:layout_centerInParent="true"/>
-
+        <!--用户邮箱-->
         <TextView
-            android:id="@+id/user_fragment_tv_email"
+            android:id="@+id/user_activity_tv_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:text="675620982@qq.com"
             android:textColor="#FFF"
             android:textSize="14sp"/>
-
+        <!--用户名-->
         <TextView
-            android:id="@+id/user_fragment_tv_name"
+            android:id="@+id/userActivity_tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/user_fragment_tv_email"
+            android:layout_above="@+id/user_activity_tv_email"
             android:text="JAVA"
             android:textColor="#FFF"
             android:textSize="14sp"/>
     </RelativeLayout>
+    <!--用户文章列表-->
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_user_button"
+        android:id="@+id/rv_user_article"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

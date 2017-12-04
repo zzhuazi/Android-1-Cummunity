@@ -45,7 +45,6 @@ public class AllUsersAdapter extends RecyclerView.Adapter<AllUsersAdapter.ViewHo
         if (mUserList.size() != 0){
             User user = mUserList.get(position);
             holder.userNameTv.setText(user.getEmail());
-            Log.i(TAG, "onBindViewHolder: " + user.getUserId());
         }
         if (onItemClickListener != null){
             holder.userNameTv.setOnClickListener(new View.OnClickListener() {

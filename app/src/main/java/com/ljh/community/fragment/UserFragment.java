@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.bumptech.glide.Glide;
 import com.ljh.community.AllUsersActivity;
 import com.ljh.community.R;
 
@@ -24,17 +25,21 @@ import org.litepal.crud.DataSupport;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class UserFragment extends BaseFragment {
     private static final String TAG = UserFragment.class.getSimpleName();
     private List<String> buttonList;
     TextView userNameTv;
     TextView userEmailTv;
+    CircleImageView circleImageView;
     RecyclerView rvUesrButton;
     @Override
     protected View initView() {
         View view = View.inflate(mContext, R.layout.fragment_user,null);
         userNameTv = view.findViewById(R.id.user_fragment_tv_name);
         userEmailTv = view.findViewById(R.id.user_fragment_tv_email);
+        circleImageView = view.findViewById(R.id.user_image);
         rvUesrButton = view.findViewById(R.id.rv_user_button);
         buttonList = new ArrayList<>();
 
@@ -53,6 +58,8 @@ public class UserFragment extends BaseFragment {
         User user = users.get(0);
         userNameTv.setText(user.getName());
         userEmailTv.setText(user.getEmail());
+        String address = "http://192.168.137.1/" + user.getAvatar();
+        Glide.with(getContext()).load(address).into(circleImageView);
 
         buttonList.add("所有用户");
         buttonList.add("用户设置");
