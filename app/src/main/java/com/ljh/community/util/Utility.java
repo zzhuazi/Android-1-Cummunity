@@ -5,6 +5,11 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONObject;
@@ -17,6 +22,7 @@ import java.util.regex.Pattern;
 
 import com.ljh.community.model.Article;
 import com.ljh.community.model.Chat;
+import com.ljh.community.model.Comment;
 import com.ljh.community.model.Notification;
 import com.ljh.community.model.Section;
 import com.ljh.community.model.User;
@@ -77,33 +83,34 @@ public class Utility {
      * @param response
      * @return
      */
-    public static int handleArticlesResponse(String response, String type) {
+    public static int handleArticlesResponse(String response) {
         if (!TextUtils.isEmpty(response)) {
             try {
-                JSONObject jsonObject = new JSONObject(response);
-                Log.i(TAG, "handleArticlesResponse: " + jsonObject);
-                String status = (String) jsonObject.get("status");
+                JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
+                String status = jsonObject.getAsJsonPrimitive("status").getAsString();
                 LogUtil.i(TAG, status);
                 if (status.equals("success")) {
-                    String data = (String) jsonObject.get("data").toString();
-                    Log.i(TAG, "handleArticlesResponse: " + data);
-                    List<Article> articles = new ArrayList<>();
-                    if (type.equals("complex")) {
-                        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
-                        articles = gson.fromJson(data, new TypeToken<List<Article>>() {
-                        }.getType());
-                    } else if (type.equals("single")){
-                        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
-                        Article article = gson.fromJson(data, Article.class);
-                        articles.add(article);
-                    }
-                    for (int i = 0; i < articles.size(); i++) {
-                        //组装实体类对象
-                        Article article = articles.get(i);
+                    JsonElement data = jsonObject.get("data");
+                    JsonArray articleJsonArray = data.getAsJsonArray();
+                    Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+                    for (JsonElement jsonElement : articleJsonArray) {
+                        Article article = gson.fromJson(jsonElement, Article.class);
                         Integer articleId = article.getArticleId();
                         boolean exist = DataSupport.isExist(Article.class, "articleId=?", articleId.toString());
                         if (!exist){
                             article.save();//将数据存储到数据库中
+                        }
+                    }
+                    JsonElement data2 = jsonObject.get("data2");
+                    if (data2 != null){
+                        JsonArray commentJsonArray = data2.getAsJsonArray();
+                        for (JsonElement jsonElement2: commentJsonArray) {
+                            Comment comment = gson.fromJson(jsonElement2, Comment.class);
+                            Integer commentId = comment.getCommentId();
+                            boolean exist = DataSupport.isExist(Comment.class, "commentId=?", commentId.toString());
+                            if (!exist){
+                                comment.save();
+                            }
                         }
                     }
                     return 1;
@@ -195,7 +202,6 @@ public class Utility {
     }
 
 
-
     /**
      * 解析和处理服务器返回的所有用户通知数据
      * 1为有数据， 0为无数据，-1为网络错误
@@ -224,18 +230,18 @@ public class Utility {
                             Pattern r = Pattern.compile(pattern);
                             Matcher m = r.matcher(content);
                             String string = "";
-                            while(m.find()) {
+                            while (m.find()) {
                                 String aString = m.group();
-                                string += aString.substring(1, aString.length()-1);
+                                string += aString.substring(1, aString.length() - 1);
                             }
 
-                            String pattern1= "articleId=?(\\d+(\\d+)?)";
+                            String pattern1 = "articleId=?(\\d+(\\d+)?)";
                             Pattern r1 = Pattern.compile(pattern1);
                             Matcher m1 = r1.matcher(content);
                             String articleId = "";
-                            while(m1.find()) {
+                            while (m1.find()) {
                                 String aString = m1.group();
-                                articleId = aString.substring(aString.lastIndexOf("=")+1);
+                                articleId = aString.substring(aString.lastIndexOf("=") + 1);
                             }
                             Integer articleIdint = Integer.parseInt(articleId);
                             Notification notificationDb = new Notification();
@@ -299,6 +305,35 @@ public class Utility {
                             chatModel.setUnread(chat.getUnread());
                             chatModel.setUserId(chat.getUserId());
                             chatModel.save();//将数据存储到数据库中
+                        }
+                    }
+                    return 1;
+                } else if (status.equals("zero")) {
+                    return 0;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return -1;
+    }
+
+    public static int handleCommentsResponse(String response) {
+        if (!TextUtils.isEmpty(response)) {
+            try {
+                JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
+                String status = jsonObject.getAsJsonPrimitive("status").getAsString();
+                LogUtil.i(TAG, status);
+                if (status.equals("success")) {
+                    JsonElement data = jsonObject.get("data");
+                    JsonArray articleJsonArray = data.getAsJsonArray();
+                    Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+                    for (JsonElement jsonElement : articleJsonArray) {
+                        Comment comment = gson.fromJson(jsonElement, Comment.class);
+                        Integer commentId = comment.getCommentId();
+                        boolean exist = DataSupport.isExist(Article.class, "commentId=?", commentId.toString());
+                        if (!exist){
+                            comment.save();//将数据存储到数据库中
                         }
                     }
                     return 1;

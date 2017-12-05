@@ -192,7 +192,7 @@ public class ArticleFragment extends BaseFragment {
                     result = Utility.handleSectionsResponse(responseText);
                 }
                 if ("articles".equals(type)) {
-                    result = Utility.handleArticlesResponse(responseText,"complex");
+                    result = Utility.handleArticlesResponse(responseText);
                 }
                 //如果回传成功，根据type，调用对应的处理方法
                 if (result == 1) {

@@ -47,6 +47,10 @@ public class UserActivity extends AppCompatActivity {
         rvUserArticles = findViewById(R.id.rv_user_article);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         rvUserArticles.setLayoutManager(layoutManager);
+        initData();
+    }
+
+    private void initData() {
         Intent intent = getIntent();
         final Integer userId = intent.getIntExtra("userId", 0);
         List<User> users = DataSupport.where("userId=?", userId.toString()).find(User.class);
@@ -79,7 +83,7 @@ public class UserActivity extends AppCompatActivity {
                     String responseText = response.body().string();
                     Log.i(TAG, "onResponse: " + responseText);
                     int result = -1; //默认为网络错误
-                    result = Utility.handleArticlesResponse(responseText,"complex");
+                    result = Utility.handleArticlesResponse(responseText);
                     if (result == 1){
                         mArticlesList = DataSupport.where("userId=?",userId.toString()).find(Article.class);
                         final ArticlesAdapter adapter = new ArticlesAdapter(mArticlesList);

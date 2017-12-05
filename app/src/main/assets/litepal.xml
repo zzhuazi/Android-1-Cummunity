@@ -7,5 +7,6 @@
         <mapping class="com.ljh.community.model.User"/>
         <mapping class="com.ljh.community.model.Notification"/>
         <mapping class="com.ljh.community.model.Chat"/>
+        <mapping class="com.ljh.community.model.Comment"/>
     </list>
 </litepal>
